@@ -2,7 +2,6 @@ import Head from 'next/head'
 import Link from 'next/link'
 import { useState } from 'react'
 
-// Hardcoded demo user is MALE - only show FEMALE profiles per halal rules
 const LOGGED_IN_USER_GENDER = 'male'
 
 const MOCK_PROFILES = [
@@ -69,24 +68,64 @@ export default function Discovery() {
   const [current, setCurrent] = useState(0)
   const [activeFilter, setActiveFilter] = useState('All')
   const [saved, setSaved] = useState<number[]>([])
-  const [showRequest, setShowRequest] = useState(false)
+  const [direction, setDirection] = useState<'left' | 'right' | null>(null)
+  const [showSheet, setShowSheet] = useState(false)
+  const [requestSent, setRequestSent] = useState(false)
 
   const profile = MOCK_PROFILES[current]
+  const isEmpty = current >= MOCK_PROFILES.length
 
-  const nextProfile = () => {
+  const goNext = () => {
     if (current < MOCK_PROFILES.length - 1) {
       setCurrent(c => c + 1)
+    } else {
+      setCurrent(MOCK_PROFILES.length)
     }
   }
 
+  const handleNotNow = () => {
+    if (isEmpty) return
+    setDirection('left')
+    setTimeout(() => {
+      goNext()
+      setDirection(null)
+    }, 400)
+  }
+
   const handleSave = () => {
+    if (isEmpty) return
+    setDirection('right')
     setSaved(s => [...s, MOCK_PROFILES[current].id])
-    nextProfile()
+    setTimeout(() => {
+      goNext()
+      setDirection(null)
+    }, 400)
   }
 
   const handleRequest = () => {
-    setShowRequest(true)
+    if (isEmpty) return
+    setShowSheet(true)
   }
+
+  const handleSendRequest = () => {
+    setShowSheet(false)
+    setRequestSent(true)
+    setTimeout(() => {
+      setRequestSent(false)
+      goNext()
+    }, 1800)
+  }
+
+  const handleReset = () => {
+    setCurrent(0)
+    setSaved([])
+  }
+
+  const cardStyle = direction === 'left'
+    ? { animation: 'swipeLeft 0.4s ease-out forwards' }
+    : direction === 'right'
+    ? { animation: 'swipeRight 0.4s ease-out forwards' }
+    : {}
 
   return (
     <>
@@ -94,6 +133,21 @@ export default function Discovery() {
         <title>Discover — Aman</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
       </Head>
+      <style jsx global>{`
+        @keyframes swipeLeft {
+          0% { transform: translateX(0) rotate(0deg); opacity: 1; }
+          100% { transform: translateX(-120%) rotate(-15deg); opacity: 0; }
+        }
+        @keyframes swipeRight {
+          0% { transform: translateX(0) rotate(0deg); opacity: 1; }
+          100% { transform: translateX(120%) rotate(15deg); opacity: 0; }
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
+
       <div className="phone-frame">
         {/* Status Bar */}
         <div className="status-bar">
@@ -141,75 +195,118 @@ export default function Discovery() {
 
         {/* Card Area */}
         <div style={{ flex: 1, padding: '16px 24px', overflowY: 'auto' }}>
-          <div className="card">
-            <div className="photo-container">
-              <img className="photo" src={profile.photos[0]} alt={profile.name} />
-              <div className="photo-gradient" />
-              {profile.verified && (
-                <div className="trust-badge">
-                  <div className="trust-badge-icon">
-                    <svg viewBox="0 0 10 10" fill="none">
-                      <path d="M2 5L4 7L8 3" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          {isEmpty ? (
+            /* Empty State */
+            <div className="card" style={{ padding: '48px 32px', textAlign: 'center', animation: 'fadeIn 0.5s ease-out' }}>
+              <div style={{ marginBottom: 20 }}>
+                <svg width="64" height="64" viewBox="0 0 64 64" fill="none" style={{ margin: '0 auto' }}>
+                  <circle cx="32" cy="32" r="30" stroke="#E8E0D5" strokeWidth="2"/>
+                  <path d="M20 32C20 25.4 25.4 20 32 20C38.6 20 44 25.4 44 32" stroke="#6B7B6B" strokeWidth="2" strokeLinecap="round"/>
+                  <path d="M32 32L38 38" stroke="#6B7B6B" strokeWidth="2" strokeLinecap="round"/>
+                  <circle cx="32" cy="26" r="3" fill="#6B7B6B"/>
+                </svg>
+              </div>
+              <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 22, fontWeight: 600, color: 'var(--navy)', marginBottom: 10 }}>
+                That&apos;s everyone for now!
+              </h3>
+              <p style={{ fontFamily: 'var(--font-body)', fontSize: 14, color: 'var(--muted)', lineHeight: 1.6, marginBottom: 28 }}>
+                Check back soon Inshallah.<br />More matches join daily.
+              </p>
+              <button className="btn-primary" onClick={handleReset} style={{ boxShadow: 'var(--btn-shadow)' }}>
+                Start Over
+              </button>
+            </div>
+          ) : (
+            <div className="card" style={cardStyle} key={profile.id}>
+              <div className="photo-container">
+                <img className="photo" src={profile.photos[0]} alt={profile.name} />
+                <div className="photo-gradient" />
+                {profile.verified && (
+                  <div className="trust-badge">
+                    <div className="trust-badge-icon">
+                      <svg viewBox="0 0 10 10" fill="none">
+                        <path d="M2 5L4 7L8 3" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </div>
+                    <span>Sheikh Verified</span>
+                  </div>
+                )}
+                <div style={{ position: 'absolute', bottom: 16, left: 16 }}>
+                  <div className="profile-name" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.3)', color: 'white' }}>
+                    {profile.name}, {profile.age}
+                  </div>
+                  <div className="profile-city" style={{ color: 'rgba(255,255,255,0.85)' }}>
+                    <svg width="12" height="14" viewBox="0 0 12 14" fill="none">
+                      <path d="M6 13C6 13 1 8.5 1 4.5C1 2.01 3.01 0 6 0C8.99 0 11 2.01 11 4.5C11 8.5 6 13 6 13Z" stroke="white" strokeWidth="1.3" fill="none"/>
+                      <circle cx="6" cy="4.5" r="1.8" stroke="white" strokeWidth="1.3" fill="none"/>
+                    </svg>
+                    {profile.city}
+                  </div>
+                </div>
+              </div>
+              <div className="card-content">
+                <div className="deen-signals">
+                  {profile.signals.map(s => (
+                    <span key={s} className="deen-chip">{s}</span>
+                  ))}
+                </div>
+                <p className="bio">{profile.bio}</p>
+                <div className="timeline-row">
+                  <div className="timeline-icon">
+                    <svg viewBox="0 0 20 20" fill="none">
+                      <circle cx="10" cy="10" r="7" stroke="#6B7B6B" strokeWidth="1.5"/>
+                      <path d="M10 6V10L12.5 12.5" stroke="#6B7B6B" strokeWidth="1.5" strokeLinecap="round"/>
                     </svg>
                   </div>
-                  <span>Sheikh Verified</span>
+                  <div>
+                    <div className="timeline-label">Ready for marriage</div>
+                    <div className="timeline-value">{profile.timeline}</div>
+                  </div>
                 </div>
-              )}
-              <div style={{ position: 'absolute', bottom: 16, left: 16 }}>
-                <div className="profile-name" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.3)', color: 'white' }}>
-                  {profile.name}, {profile.age}
-                </div>
-                <div className="profile-city" style={{ color: 'rgba(255,255,255,0.85)' }}>
-                  <svg width="12" height="14" viewBox="0 0 12 14" fill="none">
-                    <path d="M6 13C6 13 1 8.5 1 4.5C1 2.01 3.01 0 6 0C8.99 0 11 2.01 11 4.5C11 8.5 6 13 6 13Z" stroke="white" strokeWidth="1.3" fill="none"/>
-                    <circle cx="6" cy="4.5" r="1.8" stroke="white" strokeWidth="1.3" fill="none"/>
-                  </svg>
-                  {profile.city}
-                </div>
+
+                {requestSent ? (
+                  <div style={{ textAlign: 'center', padding: '16px', animation: 'fadeIn 0.3s ease-out' }}>
+                    <div style={{ fontSize: 32, marginBottom: 8 }}>
+                      <svg width="40" height="40" viewBox="0 0 40 40" fill="none" style={{ margin: '0 auto' }}>
+                        <circle cx="20" cy="20" r="18" fill="rgba(76,175,125,0.12)"/>
+                        <path d="M12 20L17 25L28 14" stroke="#4CAF7D" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </div>
+                    <p style={{ fontFamily: 'var(--font-ui)', fontWeight: 600, color: 'var(--success)' }}>Request sent!</p>
+                    <p style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: 'var(--muted)', marginTop: 4 }}>You&apos;ll be notified when they respond</p>
+                  </div>
+                ) : (
+                  <>
+                    <button
+                      className="btn-primary btn-primary-rose"
+                      onClick={handleRequest}
+                      style={{ boxShadow: 'var(--btn-shadow-rose)' }}
+                    >
+                      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                        <path d="M9 16.5C12.73 16.5 15.75 13.485 15.75 9.75C15.75 6.015 12.73 3 9 3C5.27 3 2.25 6.015 2.25 9.75C2.25 13.485 5.27 16.5 9 16.5Z" stroke="white" strokeWidth="1.4" fill="none"/>
+                        <path d="M6 9.75L8.5 12L12 8" stroke="white" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                      Request Introduction
+                    </button>
+                    <div style={{ display: 'flex', gap: 10, marginTop: 10 }}>
+                      <button className="btn-secondary" onClick={handleNotNow}>
+                        <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+                          <path d="M2 2L13 13M13 2L2 13" stroke="#6B7B6B" strokeWidth="1.4" strokeLinecap="round"/>
+                        </svg>
+                        Not now
+                      </button>
+                      <button className="btn-secondary" onClick={handleSave}>
+                        <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+                          <path d="M7.5 13.5L2 8L4 6L7.5 9.5L11 5L13 7L7.5 13.5Z" stroke="#6B7B6B" strokeWidth="1.3" strokeLinejoin="round"/>
+                        </svg>
+                        Save
+                      </button>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
-            <div className="card-content">
-              <div className="deen-signals">
-                {profile.signals.map(s => (
-                  <span key={s} className="deen-chip">{s}</span>
-                ))}
-              </div>
-              <p className="bio">{profile.bio}</p>
-              <div className="timeline-row">
-                <div className="timeline-icon">
-                  <svg viewBox="0 0 20 20" fill="none">
-                    <circle cx="10" cy="10" r="7" stroke="#6B7B6B" strokeWidth="1.5"/>
-                    <path d="M10 6V10L12.5 12.5" stroke="#6B7B6B" strokeWidth="1.5" strokeLinecap="round"/>
-                  </svg>
-                </div>
-                <div>
-                  <div className="timeline-label">Ready for marriage</div>
-                  <div className="timeline-value">{profile.timeline}</div>
-                </div>
-              </div>
-              <button className="btn-primary btn-primary-rose" onClick={handleRequest}>
-                <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                  <path d="M9 16.5C12.73 16.5 15.75 13.485 15.75 9.75C15.75 6.015 12.73 3 9 3C5.27 3 2.25 6.015 2.25 9.75C2.25 13.485 5.27 16.5 9 16.5Z" stroke="white" strokeWidth="1.4" fill="none"/>
-                  <path d="M6 9.75L8.5 12L12 8" stroke="white" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-                Request Introduction
-              </button>
-              <div style={{ display: 'flex', gap: 10, marginTop: 10 }}>
-                <button className="btn-secondary" onClick={nextProfile}>
-                  <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
-                    <path d="M2 2L13 13M13 2L2 13" stroke="#6B7B6B" strokeWidth="1.4" strokeLinecap="round"/>
-                  </svg>
-                  Not now
-                </button>
-                <button className="btn-secondary" onClick={handleSave}>
-                  <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
-                    <path d="M7.5 13.5L2 8L4 6L7.5 9.5L11 5L13 7L7.5 13.5Z" stroke="#6B7B6B" strokeWidth="1.3" strokeLinejoin="round"/>
-                  </svg>
-                  Save
-                </button>
-              </div>
-            </div>
-          </div>
+          )}
         </div>
 
         {/* Bottom Hint */}
@@ -220,6 +317,46 @@ export default function Discovery() {
         {/* Bottom Nav */}
         <BottomNav current="discover" />
       </div>
+
+      {/* Introduction Request Bottom Sheet */}
+      {showSheet && (
+        <>
+          <div
+            onClick={() => setShowSheet(false)}
+            style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.4)', zIndex: 150, backdropFilter: 'blur(4px)' }}
+          />
+          <div style={{ position: 'fixed', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: 375, background: 'var(--ivory)', borderRadius: '24px 24px 0 0', padding: '8px 24px 40px', zIndex: 200, animation: 'slideUp 0.3s ease-out' }}>
+            <div style={{ width: 40, height: 4, background: 'var(--border)', borderRadius: 2, margin: '8px auto 20px' }} />
+            <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 18, fontWeight: 600, color: 'var(--navy)', textAlign: 'center', marginBottom: 8 }}>
+              Send Introduction Request?
+            </h3>
+            <p style={{ fontFamily: 'var(--font-body)', fontSize: 14, color: 'var(--muted)', textAlign: 'center', lineHeight: 1.6, marginBottom: 24 }}>
+              {profile.name}&apos;s family will be notified and will review your profile before responding Inshallah.
+            </p>
+            <button
+              className="btn-primary btn-primary-rose"
+              onClick={handleSendRequest}
+              style={{ boxShadow: 'var(--btn-shadow-rose)', marginBottom: 10 }}
+            >
+              Send Request
+            </button>
+            <button
+              className="btn-secondary"
+              onClick={() => setShowSheet(false)}
+              style={{ width: '100%' }}
+            >
+              Cancel
+            </button>
+          </div>
+        </>
+      )}
+
+      <style jsx global>{`
+        @keyframes slideUp {
+          from { transform: translateX(-50%) translateY(100%); }
+          to { transform: translateX(-50%) translateY(0); }
+        }
+      `}</style>
     </>
   )
 }
