@@ -2,7 +2,7 @@ name: Vercel Production Deploy
 
 on:
   push:
-    branches: [main]
+    branches: [web-deploy]
   workflow_dispatch:
 
 jobs:
