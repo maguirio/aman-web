@@ -2,6 +2,7 @@ import Head from 'next/head'
 import Link from 'next/link'
 import { useState } from 'react'
 import { useRouter } from 'next/router'
+import styles from '../styles/Auth.module.css'
 
 type Step = 'name' | 'gender' | 'email' | 'done'
 
@@ -17,7 +18,7 @@ export default function Signup() {
 
   const handleNext = async () => {
     setLoading(true)
-    await new Promise(r => setTimeout(r, 800)) // simulate API
+    await new Promise(r => setTimeout(r, 800))
     if (step === 'name') setStep('gender')
     else if (step === 'gender') setStep('email')
     else if (step === 'email') {
@@ -32,6 +33,8 @@ export default function Signup() {
     : step === 'email' ? email.includes('@') && password.length >= 8 && agreed
     : false
 
+  const btnBg = gender === 'female' ? 'var(--rose-pink)' : 'var(--sage)'
+
   return (
     <>
       <Head>
@@ -42,7 +45,6 @@ export default function Signup() {
         {/* Notch */}
         <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: 150, height: 30, background: 'var(--ivory)', borderRadius: '0 0 20px 20px', zIndex: 10 }} />
 
-        {/* Status Bar */}
         <div className="status-bar">
           <span style={{ fontWeight: 600 }}>9:41</span>
           <div className="status-bar-icons">
@@ -55,68 +57,59 @@ export default function Signup() {
               <path d="M7.5 11C10.26 11 12.5 8.76 12.5 6C12.5 3.24 10.26 1 7.5 1C4.74 1 2.5 3.24 2.5 6C2.5 8.76 4.74 11 7.5 11Z" stroke="#0F172A" strokeWidth="1.2"/>
               <path d="M1 10.5H4M11 10.5H14" stroke="#0F172A" strokeWidth="1.2" strokeLinecap="round"/>
             </svg>
-            <svg width="25" height="12" viewBox="0 0 25 12" fill="none">
-              <rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="#0F172A" strokeWidth="1"/>
-              <path d="M22 4V8C23 8.5 24 9.5 24 11" stroke="#0F172A" strokeWidth="1" strokeLinecap="round"/>
-            </svg>
           </div>
         </div>
 
         {/* Progress */}
         <div style={{ padding: '8px 24px 0' }}>
           <div style={{ display: 'flex', gap: 4 }}>
-            {['name','gender','email'].map((s, i) => (
-              <div key={s} style={{ flex: 1, height: 4, background: step === s || (step === 'gender' && i === 0) || (step === 'email' && i <= 1) ? 'var(--rose-pink)' : 'var(--border)', borderRadius: 2, transition: 'background 0.3s' }} />
-            ))}
+            {['name','gender','email'].map((s, i) => {
+              const done = step === 'gender' && i === 0 || step === 'email' && i <= 1 || step === s
+              const active = step === s
+              return <div key={s} style={{ flex: 1, height: 4, background: done ? 'var(--rose-pink)' : 'var(--border)', borderRadius: 2, transition: 'background 0.3s' }} />
+            })}
           </div>
         </div>
 
         {/* Header */}
-        <div className="screen-header">
+        <div className={styles['screen-header']}>
           {step === 'name' && <>
-            <h1 className="screen-title">Assalamu Alaikum</h1>
-            <p className="screen-subtitle">What is your full name?</p>
+            <h1 className={styles['screen-title']}>Assalamu Alaikum</h1>
+            <p className={styles['screen-subtitle']}>What is your full name?</p>
           </>}
           {step === 'gender' && <>
-            <h1 className="screen-title">I am a...</h1>
-            <p className="screen-subtitle">This determines who you can connect with</p>
+            <h1 className={styles['screen-title']}>I am a...</h1>
+            <p className={styles['screen-subtitle']}>This determines who you can connect with</p>
           </>}
           {step === 'email' && <>
-            <h1 className="screen-title">Join Aman</h1>
-            <p className="screen-subtitle">Let&apos;s find you a good spouse, Allah willing</p>
+            <h1 className={styles['screen-title']}>Join Aman</h1>
+            <p className={styles['screen-subtitle']}>Let&apos;s find you a good spouse, Allah willing</p>
           </>}
           {step === 'done' && <>
-            <h1 className="screen-title" style={{ color: 'var(--sage)' }}>Welcome, {name.split(' ')[0]}!</h1>
-            <p className="screen-subtitle">Setting up your profile...</p>
+            <h1 className={styles['screen-title']} style={{ color: 'var(--sage)' }}>Welcome, {name.split(' ')[0]}!</h1>
+            <p className={styles['screen-subtitle']}>Setting up your profile...</p>
           </>}
         </div>
 
         {/* Form */}
-        <div className="form-content">
+        <div className={styles['form-content']}>
           {step === 'name' && (
             <div className="input-group">
               <label className="input-label">Full name</label>
-              <input
-                className="input-field"
-                type="text"
-                placeholder="Your full name"
-                value={name}
-                onChange={e => setName(e.target.value)}
-                autoFocus
-              />
+              <input className="input-field" type="text" placeholder="Your full name" value={name} onChange={e => setName(e.target.value)} autoFocus />
             </div>
           )}
 
           {step === 'gender' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 24 }}>
               {[
-                { id: 'male', label: 'Male', sub: 'Looking for a wife', icon: (
+                { id: 'male' as const, label: 'Male', sub: 'Looking for a wife', icon: (
                   <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
                     <circle cx="14" cy="14" r="11" stroke="var(--sage)" strokeWidth="1.5"/>
                     <path d="M14 9V19M9 14H19" stroke="var(--sage)" strokeWidth="1.5" strokeLinecap="round"/>
                   </svg>
                 )},
-                { id: 'female', label: 'Female', sub: 'Looking for a husband', icon: (
+                { id: 'female' as const, label: 'Female', sub: 'Looking for a husband', icon: (
                   <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
                     <circle cx="14" cy="14" r="11" stroke="var(--rose-pink)" strokeWidth="1.5"/>
                     <path d="M14 9V14L17 17" stroke="var(--rose-pink)" strokeWidth="1.5" strokeLinecap="round"/>
@@ -125,7 +118,7 @@ export default function Signup() {
               ].map(opt => (
                 <button
                   key={opt.id}
-                  onClick={() => setGender(opt.id as 'male' | 'female')}
+                  onClick={() => setGender(opt.id)}
                   style={{
                     display: 'flex', alignItems: 'center', gap: 14, padding: '18px 16px',
                     background: gender === opt.id ? (opt.id === 'male' ? 'rgba(107,123,107,0.06)' : 'rgba(232,76,119,0.06)') : 'var(--pure-white)',
@@ -162,17 +155,17 @@ export default function Signup() {
                 <label className="input-label">Password</label>
                 <input className="input-field" type="password" placeholder="At least 8 characters" value={password} onChange={e => setPassword(e.target.value)} />
               </div>
-              <div className="checkbox-row">
+              <div className={styles['checkbox-row']}>
                 <div
                   onClick={() => setAgreed(!agreed)}
                   style={{ width: 20, height: 20, border: `1.5px solid ${agreed ? 'var(--sage)' : 'var(--border)'}`, borderRadius: 6, background: agreed ? 'var(--sage)' : 'var(--pure-white)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: 2, cursor: 'pointer', transition: 'all 0.2s' }}
                 >
                   {agreed && <svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>}
                 </div>
-                <span className="checkbox-label">I agree to <span style={{ color: 'var(--rose-pink)' }}>Terms of Service</span> and <span style={{ color: 'var(--rose-pink)' }}>Privacy Policy</span></span>
+                <span className={styles['checkbox-label']}>I agree to <span style={{ color: 'var(--rose-pink)' }}>Terms of Service</span> and <span style={{ color: 'var(--rose-pink)' }}>Privacy Policy</span></span>
               </div>
-              {/* Islamic Divider */}
-              <div className="divider">
+              {/* Islamic diamond divider */}
+              <div className={styles.divider}>
                 <svg viewBox="0 0 200 20" fill="none" style={{ width: 200, height: 20, color: 'var(--border)' }}>
                   <line x1="0" y1="10" x2="70" y2="10" stroke="currentColor" strokeWidth="1"/>
                   <polygon points="100,2 108,10 100,18 92,10" stroke="currentColor" strokeWidth="1" fill="none"/>
@@ -186,7 +179,7 @@ export default function Signup() {
           {step !== 'done' && (
             <button
               className="btn-primary"
-              style={{ background: gender === 'female' ? 'var(--rose-pink)' : 'var(--sage)', boxShadow: gender === 'female' ? 'var(--btn-shadow-rose)' : 'var(--btn-shadow)' }}
+              style={{ background: btnBg, boxShadow: gender === 'female' ? '0 8px 24px rgba(232,76,119,0.35)' : '0 8px 24px rgba(107,123,107,0.35)', cursor: (!canProceed || loading) ? 'not-allowed' : 'pointer', opacity: (!canProceed || loading) ? 0.6 : 1 }}
               onClick={handleNext}
               disabled={!canProceed || loading}
             >
@@ -195,7 +188,7 @@ export default function Signup() {
           )}
 
           {step === 'email' && (
-            <Link href="/login" className="ghost-link">Already have an account? Sign in</Link>
+            <Link href="/login" className={styles['ghost-link']}>Already have an account? Sign in</Link>
           )}
         </div>
       </div>

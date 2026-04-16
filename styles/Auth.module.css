@@ -29,6 +29,12 @@
   gap: 12px;
   margin: 16px 0 24px;
 }
+.checkbox-label {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.5;
+}
 
 /* ─── Ghost Link ──────────────────────────────────── */
 .ghost-link {

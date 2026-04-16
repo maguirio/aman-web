@@ -19,6 +19,10 @@
   --border: #E8E0D5;
   --muted: #9CA3AF;
   --success: #4CAF7D;
+  --btn-shadow: 0 8px 24px rgba(107,123,107,0.30);
+  --btn-shadow-rose: 0 8px 24px rgba(232,76,119,0.30);
+  --btn-shadow-gold: 0 8px 24px rgba(201,168,76,0.30);
+  --card-shadow: 0 4px 24px rgba(15,23,42,0.08), 0 1px 3px rgba(15,23,42,0.05);
   --font-display: 'Playfair Display', Georgia, serif;
   --font-ui: 'Poppins', system-ui, sans-serif;
   --font-body: 'Inter', system-ui, sans-serif;
