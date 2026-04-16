@@ -69,6 +69,37 @@
   align-items: center;
   justify-content: center;
   margin: 20px 0;
+  position: relative;
+}
+/* Islamic diamond pattern using CSS only */
+.divider::before,
+.divider::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 8px;
+  height: 8px;
+  background: var(--border);
+  transform: translateX(-50%) rotate(45deg);
+}
+.divider::before {
+  top: -4px;
+}
+.divider::after {
+  bottom: -4px;
+}
+.divider-line {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+.divider-text {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+  padding: 0 12px;
 }
 
 /* ─── Auth specific ───────────────────────────────── */

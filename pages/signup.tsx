@@ -1,6 +1,6 @@
 import Head from 'next/head'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import styles from '../styles/Auth.module.css'
 
@@ -15,6 +15,17 @@ export default function Signup() {
   const [gender, setGender] = useState<'male' | 'female' | ''>('')
   const [agreed, setAgreed] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [dots, setDots] = useState('')
+
+  // Animated dots for done state
+  useEffect(() => {
+    if (step === 'done') {
+      const interval = setInterval(() => {
+        setDots(d => d.length >= 3 ? '' : d + '.')
+      }, 400)
+      return () => clearInterval(interval)
+    }
+  }, [step])
 
   const handleNext = async () => {
     setLoading(true)
@@ -23,7 +34,8 @@ export default function Signup() {
     else if (step === 'gender') setStep('email')
     else if (step === 'email') {
       setStep('done')
-      setTimeout(() => router.push('/discovery'), 1200)
+      localStorage.setItem('aman_logged_in', 'true')
+      setTimeout(() => router.push('/discovery'), 1500)
     }
     setLoading(false)
   }
@@ -41,6 +53,17 @@ export default function Signup() {
         <title>Join Aman</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
       </Head>
+      <style jsx global>{`
+        @media (min-width: 421px) {
+          .form-content {
+            padding: 0 48px 40px !important;
+          }
+        }
+        .btn-primary:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+      `}</style>
       <div className="phone-frame">
         {/* Notch */}
         <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: 150, height: 30, background: 'var(--ivory)', borderRadius: '0 0 20px 20px', zIndex: 10 }} />
@@ -87,7 +110,7 @@ export default function Signup() {
           </>}
           {step === 'done' && <>
             <h1 className={styles['screen-title']} style={{ color: 'var(--sage)' }}>Welcome, {name.split(' ')[0]}!</h1>
-            <p className={styles['screen-subtitle']}>Setting up your profile...</p>
+            <p className={styles['screen-subtitle']}>Setting up your profile{dots}</p>
           </>}
         </div>
 
@@ -103,13 +126,13 @@ export default function Signup() {
           {step === 'gender' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 24 }}>
               {[
-                { id: 'male' as const, label: 'Male', sub: 'Looking for a wife', icon: (
+                { id: 'male' as const, label: 'Male', sub: 'Looking for a wife', color: 'var(--sage)', icon: (
                   <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
                     <circle cx="14" cy="14" r="11" stroke="var(--sage)" strokeWidth="1.5"/>
                     <path d="M14 9V19M9 14H19" stroke="var(--sage)" strokeWidth="1.5" strokeLinecap="round"/>
                   </svg>
                 )},
-                { id: 'female' as const, label: 'Female', sub: 'Looking for a husband', icon: (
+                { id: 'female' as const, label: 'Female', sub: 'Looking for a husband', color: 'var(--rose-pink)', icon: (
                   <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
                     <circle cx="14" cy="14" r="11" stroke="var(--rose-pink)" strokeWidth="1.5"/>
                     <path d="M14 9V14L17 17" stroke="var(--rose-pink)" strokeWidth="1.5" strokeLinecap="round"/>
@@ -121,9 +144,10 @@ export default function Signup() {
                   onClick={() => setGender(opt.id)}
                   style={{
                     display: 'flex', alignItems: 'center', gap: 14, padding: '18px 16px',
-                    background: gender === opt.id ? (opt.id === 'male' ? 'rgba(107,123,107,0.06)' : 'rgba(232,76,119,0.06)') : 'var(--pure-white)',
-                    border: `1.5px solid ${gender === opt.id ? (opt.id === 'male' ? 'var(--sage)' : 'var(--rose-pink)') : 'var(--border)'}`,
+                    background: gender === opt.id ? (opt.id === 'male' ? 'rgba(107,123,107,0.08)' : 'rgba(232,76,119,0.08)') : 'var(--pure-white)',
+                    border: `2px solid ${gender === opt.id ? opt.color : 'var(--border)'}`,
                     borderRadius: 16, cursor: 'pointer', textAlign: 'left', transition: 'all 0.2s', width: '100%',
+                    boxShadow: gender === opt.id ? `0 4px 16px ${opt.id === 'male' ? 'rgba(107,123,107,0.2)' : 'rgba(232,76,119,0.2)'}` : 'none',
                   }}
                 >
                   <div style={{ width: 52, height: 52, borderRadius: '50%', background: 'var(--cream)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -134,8 +158,8 @@ export default function Signup() {
                     <div style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: 'var(--muted)', marginTop: 2 }}>{opt.sub}</div>
                   </div>
                   {gender === opt.id && (
-                    <div style={{ marginLeft: 'auto', width: 20, height: 20, borderRadius: '50%', background: opt.id === 'male' ? 'var(--sage)' : 'var(--rose-pink)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
+                    <div style={{ marginLeft: 'auto', width: 24, height: 24, borderRadius: '50%', background: opt.color, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <svg width="12" height="10" viewBox="0 0 10 8" fill="none">
                         <path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                       </svg>
                     </div>
@@ -164,22 +188,15 @@ export default function Signup() {
                 </div>
                 <span className={styles['checkbox-label']}>I agree to <span style={{ color: 'var(--rose-pink)' }}>Terms of Service</span> and <span style={{ color: 'var(--rose-pink)' }}>Privacy Policy</span></span>
               </div>
-              {/* Islamic diamond divider */}
-              <div className={styles.divider}>
-                <svg viewBox="0 0 200 20" fill="none" style={{ width: 200, height: 20, color: 'var(--border)' }}>
-                  <line x1="0" y1="10" x2="70" y2="10" stroke="currentColor" strokeWidth="1"/>
-                  <polygon points="100,2 108,10 100,18 92,10" stroke="currentColor" strokeWidth="1" fill="none"/>
-                  <polygon points="100,5 104,10 100,15 96,10" fill="currentColor"/>
-                  <line x1="130" y1="10" x2="200" y2="10" stroke="currentColor" strokeWidth="1"/>
-                </svg>
-              </div>
+              {/* Clean Islamic diamond divider using CSS */}
+              <div className={styles.divider} />
             </>
           )}
 
           {step !== 'done' && (
             <button
               className="btn-primary"
-              style={{ background: btnBg, boxShadow: gender === 'female' ? '0 8px 24px rgba(232,76,119,0.35)' : '0 8px 24px rgba(107,123,107,0.35)', cursor: (!canProceed || loading) ? 'not-allowed' : 'pointer', opacity: (!canProceed || loading) ? 0.6 : 1 }}
+              style={{ background: btnBg, boxShadow: gender === 'female' ? '0 8px 24px rgba(232,76,119,0.35)' : '0 8px 24px rgba(107,123,107,0.35)' }}
               onClick={handleNext}
               disabled={!canProceed || loading}
             >

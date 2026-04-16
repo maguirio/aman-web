@@ -1,14 +1,54 @@
 import Head from 'next/head'
 import Link from 'next/link'
+import { useState } from 'react'
+import { useRouter } from 'next/router'
 import styles from '../styles/Auth.module.css'
 
 export default function Login() {
+  const router = useRouter()
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+
+  const handleSignIn = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError('')
+    setLoading(true)
+
+    // Demo validation: email must contain '@' and password >= 6 chars
+    await new Promise(r => setTimeout(r, 800))
+
+    if (email.includes('@') && password.length >= 6) {
+      localStorage.setItem('aman_logged_in', 'true')
+      router.push('/discovery')
+    } else {
+      setError('Invalid email or password')
+      setLoading(false)
+    }
+  }
+
   return (
     <>
       <Head>
         <title>Sign In — Aman</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
       </Head>
+      <style jsx global>{`
+        @media (min-width: 421px) {
+          .login-content {
+            padding: 32px 48px 40px !important;
+          }
+        }
+        .login-input:focus {
+          border-color: var(--sage) !important;
+          outline: none !important;
+        }
+        .btn-primary:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+      `}</style>
       <div className="phone-frame">
         {/* Notch */}
         <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: 150, height: 30, background: 'var(--ivory)', borderRadius: '0 0 20px 20px', zIndex: 10 }} />
@@ -40,38 +80,65 @@ export default function Login() {
           <div style={{ width: 36 }} />
         </div>
 
-        <div style={{ padding: '32px 24px 40px', flex: 1 }}>
-          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 26, fontWeight: 600, color: 'var(--navy)', marginBottom: 8 }}>Welcome back</h1>
-          <p style={{ fontFamily: 'var(--font-body)', fontSize: 14, color: 'var(--muted)', marginBottom: 32, lineHeight: 1.6 }}>Sign in to continue your search</p>
+        <form onSubmit={handleSignIn}>
+          <div className="login-content" style={{ padding: '32px 24px 40px', flex: 1 }}>
+            <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 26, fontWeight: 600, color: 'var(--navy)', marginBottom: 8 }}>Welcome back</h1>
+            <p style={{ fontFamily: 'var(--font-body)', fontSize: 14, color: 'var(--muted)', marginBottom: 32, lineHeight: 1.6 }}>Sign in to continue your search</p>
 
-          <div className="input-group">
-            <label className="input-label">Email address</label>
-            <input className="input-field" type="email" placeholder="your@email.com" />
+            <div className="input-group">
+              <label className="input-label">Email address</label>
+              <input
+                className="input-field login-input"
+                type="email"
+                placeholder="your@email.com"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                required
+              />
+            </div>
+            <div className="input-group">
+              <label className="input-label">Password</label>
+              <input
+                className="input-field login-input"
+                type="password"
+                placeholder="Your password"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                required
+              />
+            </div>
+
+            {error && (
+              <p style={{ color: '#DC2626', fontSize: 13, marginBottom: 16, fontFamily: 'var(--font-ui)' }}>
+                {error}
+              </p>
+            )}
+
+            <button
+              type="submit"
+              className="btn-primary btn-primary-rose"
+              style={{ boxShadow: 'var(--btn-shadow-rose)' }}
+              disabled={loading}
+            >
+              {loading ? 'Checking...' : 'Sign In'}
+            </button>
+
+            <div style={{ textAlign: 'center', marginTop: 8 }}>
+              <Link href="/forgot-password" className="btn-ghost">Forgot password?</Link>
+            </div>
+
+            <div className={styles.divider} style={{ margin: '24px 0' }}>
+              <div className="divider-line" />
+              <span className="divider-text">or</span>
+              <div className="divider-line" />
+            </div>
+
+            <p style={{ textAlign: 'center', fontFamily: 'var(--font-body)', fontSize: 13, color: 'var(--muted)' }}>
+              Don&apos;t have an account?{' '}
+              <Link href="/signup" style={{ color: 'var(--rose-pink)', textDecoration: 'none', fontWeight: 500 }}>Sign up</Link>
+            </p>
           </div>
-          <div className="input-group">
-            <label className="input-label">Password</label>
-            <input className="input-field" type="password" placeholder="Your password" />
-          </div>
-
-          <button className="btn-primary btn-primary-rose" style={{ boxShadow: 'var(--btn-shadow-rose)' }}>
-            Sign In
-          </button>
-
-          <div style={{ textAlign: 'center', marginTop: 8 }}>
-            <Link href="/forgot-password" className="btn-ghost">Forgot password?</Link>
-          </div>
-
-          <div className="divider" style={{ margin: '24px 0' }}>
-            <div className="divider-line" />
-            <span className="divider-text">or</span>
-            <div className="divider-line" />
-          </div>
-
-          <p style={{ textAlign: 'center', fontFamily: 'var(--font-body)', fontSize: 13, color: 'var(--muted)' }}>
-            Don&apos;t have an account?{' '}
-            <Link href="/signup" style={{ color: 'var(--rose-pink)', textDecoration: 'none', fontWeight: 500 }}>Sign up</Link>
-          </p>
-        </div>
+        </form>
       </div>
     </>
   )
