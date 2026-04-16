@@ -1,27 +1,83 @@
+/* ─── Screen Header ───────────────────────────────── */
+.screen-header {
+  padding: 16px 24px 20px;
+  background: var(--ivory);
+  text-align: center;
+}
+.screen-title {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--navy);
+  margin-bottom: 6px;
+}
+.screen-subtitle {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* ─── Form Content ────────────────────────────────── */
+.form-content {
+  padding: 0 24px 40px;
+}
+
+/* ─── Checkbox Row ────────────────────────────────── */
+.checkbox-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 16px 0 24px;
+}
+
+/* ─── Ghost Link ──────────────────────────────────── */
+.ghost-link {
+  display: block;
+  text-align: center;
+  font-family: var(--font-ui);
+  font-size: 14px;
+  color: var(--sage);
+  text-decoration: none;
+  padding: 10px;
+}
+
+/* ─── Gender Cards ────────────────────────────────── */
+.gender-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 16px;
+  background: var(--pure-white);
+  border: 1.5px solid var(--border);
+  border-radius: 16px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s;
+  width: 100%;
+}
+.gender-card:active { transform: scale(0.99); }
+
+/* ─── Divider ────────────────────────────────────── */
+.divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+/* ─── Auth specific ───────────────────────────────── */
 .page {
   min-height: 100vh;
   background: var(--ivory);
   display: flex;
   flex-direction: column;
 }
-
-.header {
-  padding: 12px 24px 16px;
-  background: var(--ivory);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid var(--border);
-  position: relative;
-}
-
 .content {
   flex: 1;
   padding: 32px 24px;
   display: flex;
   flex-direction: column;
 }
-
 .title {
   font-family: var(--font-display);
   font-size: 26px;
@@ -29,7 +85,6 @@
   color: var(--navy);
   margin-bottom: 8px;
 }
-
 .subtitle {
   font-family: var(--font-body);
   font-size: 14px;
@@ -37,7 +92,6 @@
   margin-bottom: 32px;
   line-height: 1.6;
 }
-
 .terms {
   font-family: var(--font-body);
   font-size: 12px;
@@ -45,61 +99,21 @@
   text-align: center;
   line-height: 1.6;
 }
-
 .terms a {
   color: var(--rose-pink);
   text-decoration: none;
 }
-
-.genderCards {
-  display: flex;
-  gap: 16px;
-  margin-bottom: 32px;
+.inputGroup {
+  margin-bottom: 20px;
 }
 
-.genderCard {
-  flex: 1;
-  padding: 28px 16px;
-  background: var(--pure-white);
-  border: 1.5px solid var(--border);
-  border-radius: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.genderCard:active {
-  background: var(--cream);
-  transform: scale(0.98);
-}
-
-.genderCard span {
-  font-family: var(--font-ui);
-  font-size: 15px;
-  font-weight: 500;
-  color: var(--navy);
-}
-
-.genderIcon {
-  width: 64px;
-  height: 64px;
-  background: var(--cream);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
+/* ─── OTP ─────────────────────────────────────────── */
 .otpInputs {
   display: flex;
   gap: 12px;
   justify-content: center;
   margin-bottom: 32px;
 }
-
 .otpInput {
   width: 48px;
   height: 56px;
@@ -113,7 +127,45 @@
   color: var(--navy);
   outline: none;
 }
+.otpInput:focus { border-color: var(--sage); }
 
-.otpInput:focus {
-  border-color: var(--sage);
+/* ─── Matches page ───────────────────────────────── */
+.m-page {
+  min-height: 100vh;
+  background: var(--ivory);
+  padding-bottom: 90px;
+}
+.m-header {
+  padding: 12px 24px 16px;
+  background: var(--ivory);
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+}
+.m-tabs {
+  display: flex;
+  padding: 0 24px;
+  border-bottom: 1px solid var(--border);
+  background: var(--ivory);
+}
+.m-tab {
+  flex: 1;
+  padding: 14px 0;
+  font-family: var(--font-ui);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--muted);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.m-tab.active {
+  color: var(--sage);
+  border-bottom-color: var(--sage);
+  font-weight: 600;
+}
+.m-list {
+  background: var(--pure-white);
+  border-top: 1px solid var(--border);
 }
