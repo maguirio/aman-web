@@ -1,0 +1,119 @@
+.page {
+  min-height: 100vh;
+  background: var(--ivory);
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  padding: 12px 24px 16px;
+  background: var(--ivory);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+}
+
+.content {
+  flex: 1;
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--navy);
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 32px;
+  line-height: 1.6;
+}
+
+.terms {
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--muted);
+  text-align: center;
+  line-height: 1.6;
+}
+
+.terms a {
+  color: var(--rose-pink);
+  text-decoration: none;
+}
+
+.genderCards {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.genderCard {
+  flex: 1;
+  padding: 28px 16px;
+  background: var(--pure-white);
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.genderCard:active {
+  background: var(--cream);
+  transform: scale(0.98);
+}
+
+.genderCard span {
+  font-family: var(--font-ui);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--navy);
+}
+
+.genderIcon {
+  width: 64px;
+  height: 64px;
+  background: var(--cream);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.otpInputs {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 32px;
+}
+
+.otpInput {
+  width: 48px;
+  height: 56px;
+  background: var(--pure-white);
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 600;
+  text-align: center;
+  color: var(--navy);
+  outline: none;
+}
+
+.otpInput:focus {
+  border-color: var(--sage);
+}
