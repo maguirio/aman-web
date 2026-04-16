@@ -2,6 +2,9 @@ import Head from 'next/head'
 import Link from 'next/link'
 import { useState } from 'react'
 
+// Hardcoded demo user is MALE - only show FEMALE profiles per halal rules
+const LOGGED_IN_USER_GENDER = 'male'
+
 const MOCK_PROFILES = [
   {
     id: 1,
@@ -33,19 +36,30 @@ const MOCK_PROFILES = [
     verified: false,
     photos: ['https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=600&h=750&fit=crop&crop=faces'],
     signals: ['Prays 5x Daily', 'Hajj 2022', 'Halal Eater'],
-    bio: " Elementary teacher, love kids and cooking. My family is from Morocco like yours. Looking for someone serious about deen and building a home together.",
+    bio: "Elementary teacher, love kids and cooking. My family is originally from Morocco like yours. Looking for someone serious about deen and building a home together.",
     timeline: 'Within 1 year',
   },
   {
     id: 4,
-    name: 'Yusuf M.',
-    age: 30,
+    name: 'Zainab M.',
+    age: 26,
     city: 'Montreal, QC',
     verified: true,
-    photos: ['https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=750&fit=crop&crop=faces'],
-    signals: ['Prays 5x Daily', 'Business Owner', 'Hajj 2023'],
-    bio: "Electrical engineer turned entrepreneur. I run an HVAC business. Family is originally from Morocco and we're quite traditional. Ready to build something real.",
-    timeline: 'Within 3 months',
+    photos: ['https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=600&h=750&fit=crop&crop=faces'],
+    signals: ['Prays 5x Daily', 'Hijabi', 'Family Linked'],
+    bio: "Pharmacy student at Université de Montréal. I enjoy baking, calligraphy, and volunteering at the local masjid. Seeking a partner who values patience and sincerity.",
+    timeline: 'Within 1 year',
+  },
+  {
+    id: 5,
+    name: 'Layla S.',
+    age: 28,
+    city: 'Brampton, ON',
+    verified: false,
+    photos: ['https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=600&h=750&fit=crop&crop=faces'],
+    signals: ['Prays 5x Daily', 'Revert', 'Halal Eater', 'Family Involved'],
+    bio: "Revert Muslimah for 4 years, working as a graphic designer. I love nature walks and cooking authentic dishes. Hope to find someone who supports my deen and goals.",
+    timeline: 'Within 6 months',
   },
 ]
 
